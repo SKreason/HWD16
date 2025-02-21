@@ -36,7 +36,7 @@ class Announcement(models.Model):
 
 
 class Respond(models.Model):
-    member = models.OneToOneField(User, on_delete=models.CASCADE)
+    member = models.ForeignKey(User, on_delete=models.CASCADE)
     announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE)
     text = models.TextField()
     dateCreation = models.DateTimeField(auto_now_add=True)
