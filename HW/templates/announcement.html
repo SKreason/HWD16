@@ -1,0 +1,71 @@
+
+<!--Шаблон для страницы-->
+{% extends 'index.html' %}
+
+<!--Загрузка своих фильтров, если есть-->
+<!-- load custom_filters -->
+
+<!--Блок заголовка-->
+{% block title %} {{ Объявление.title }} {% endblock title %}
+
+<!--Блок ссылки-->
+{% block link %}<!--Ссылка-->{%endblock link %}
+<!--Блок имени ссылки-->
+{% block namelink %}<!--Имя ссылки-->{% endblock namelink %}
+
+<!--Блок заголовка раздела-->
+{% block title2 %}{{ Объявление.title }}{% endblock title2 %}
+
+<!--Блок контента страницы-->
+{% block content %}
+<hr>
+<br>
+Дата создания:  {{ Объявление.dateCreation|date:'d F Y' }}
+<br>
+Категория: {{ Объявление.category }}
+<br>
+Объявление:
+<br>
+{{ Объявление.text }}
+<br>
+{% if Объявление.image %}
+				<img src="media/{{ Объявление.image }}" height="250">
+			{% else %}
+				Нет изображения.
+			{% endif %}
+<br>
+{% if Объявление.file %}
+				<a href="media/{{ Объявление.file }}">Скачать прикрепленный файл</a>
+			{% else %}
+				Нет прикрепленных файлов.
+			{% endif %}
+<hr>
+Автор: {{ Объявление.author }}
+<br>
+<hr>
+{% if Отклики|length == 0 %}
+				Нет откликов.
+			{% else %}
+				Отклики:
+				{%for Отклик in Отклики %}
+				<br>
+				{{ Отклик.member }}:  {{ Отклик.text }}
+				{% endfor %}
+{% endif %}
+
+<br>
+<hr>
+
+{% if request.user == Объявление.author %}
+<li><a href="{{Объявление.id}}/edit"/>Редактировать объявление</a></li>
+<li><a href="{{Объявление.id}}/delete"/>Удалить объявление</a></li>
+<hr>
+<br>
+{% endif %}
+
+
+
+{% endblock content %}
+
+<!--Блок пагинации-->
+{% block page %}{% endblock page %}

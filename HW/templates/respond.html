@@ -1,0 +1,49 @@
+
+<!--Шаблон для страницы-->
+{% extends 'index.html' %}
+
+<!--Загрузка своих фильтров, если есть-->
+<!-- load custom_filters -->
+
+<!--Блок заголовка-->
+{% block title %} <!--Заголовок--> {% endblock title %}
+
+<!--Блок ссылки-->
+{% block link %}<!--Ссылка-->{%endblock link %}
+<!--Блок имени ссылки-->
+{% block namelink %}<!--Имя ссылки-->{% endblock namelink %}
+
+<!--Блок заголовка раздела-->
+{% block title2 %}{% endblock title2 %}
+
+<!--Блок контента страницы-->
+{% block content %}
+
+ОТКЛИКИ
+   <form action="" method="get">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       <label>По категории: {{ filterset.form.title }}</label>
+       {# Добавим кнопку отправки данных формы #}
+       <input type="submit" value="Найти" />
+   </form>
+
+
+<form method="get">
+    {{ filter.form }}
+    <input style="margin-top: 10px" type="submit" value="Применить">
+    <button><a href=>Сбросить</a></button>
+</form>
+
+{%for Отклик in Отклики %}
+<br>
+{{ Отклик.text }}
+{% endfor %}
+
+{%for Объявление in Объявления %}
+<br>
+{{ Объявление.id }}
+{% endfor %}
+{% endblock content %}
+
+<!--Блок пагинации-->
+{% block page %}{% endblock page %}

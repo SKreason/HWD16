@@ -1,0 +1,31 @@
+
+<!--Шаблон для страницы-->
+{% extends 'index.html' %}
+
+<!--Загрузка своих фильтров, если есть-->
+<!-- load custom_filters -->
+
+<!--Блок заголовка-->
+{% block title %} Удаление объявления {% endblock title %}
+
+<!--Блок ссылки-->
+{% block link %}<!--Ссылка-->{%endblock link %}
+<!--Блок имени ссылки-->
+{% block namelink %}<!--Имя ссылки-->{% endblock namelink %}
+
+<!--Блок заголовка раздела-->
+{% block title2 %}Удалить:{% endblock title2 %}
+
+<!--Блок контента страницы-->
+{% block content %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    <p>Удаляем объявление?  <h4>"{{ Объявление.title }}"</h4></p>
+    <input type="submit" value="Delete" />
+</form>
+
+{% endblock content %}
+
+<!--Блок пагинации-->
+{% block page %}{% endblock page %}
