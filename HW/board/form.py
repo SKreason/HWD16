@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.http import request
 
-from .models import Announcement
+from .models import Announcement, Respond
 
 
 class AnnouncementForm(forms.ModelForm):
@@ -27,5 +27,18 @@ class AnnouncementForm(forms.ModelForm):
             raise ValidationError(
                 "Заголовок не должен быть одинаковым с текстом новости"
             )
+        return cleaned_data
 
+
+class RespondForm(forms.ModelForm):
+    author = User
+    text = forms.CharField(min_length=10, label='Текст объявления', widget=forms.Textarea)
+
+    class Meta:
+        model = Respond
+        fields = ['text']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        text = cleaned_data.get("text")
         return cleaned_data

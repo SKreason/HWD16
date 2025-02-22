@@ -34,6 +34,9 @@ class Announcement(models.Model):
         verbose_name = 'Объявление'
         verbose_name_plural = 'Объявления'
 
+    def get_absolute_url(self):
+        return reverse('detail', args=[str(self.id)])
+
 
 class Respond(models.Model):
     member = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -42,19 +45,7 @@ class Respond(models.Model):
     dateCreation = models.DateTimeField(auto_now_add=True)
     confirm = models.BooleanField(default=False)
 
-    # class Meta:
-    #     verbose_name = 'Отклик'
-    #     verbose_name_plural = 'Отклики'
+    class Meta:
+        verbose_name = 'Отклик'
+        verbose_name_plural = 'Отклики'
 
-
-# class Subscriber(models.Model):
-#     user = models.ForeignKey(
-#         to=User,
-#         on_delete=models.CASCADE,
-#         related_name='subscriptions',
-#     )
-#     category = models.ForeignKey(
-#         to='Category',
-#         on_delete=models.CASCADE,
-#         related_name='subscriptions',
-#     )

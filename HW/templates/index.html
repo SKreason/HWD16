@@ -19,8 +19,6 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-left mb-2 mb-lg-0">
                         <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Главная</a></li>
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="/respond/">Отклики</a></li>
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="/set2/">Пункт2</a></li>
                     </ul>
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <!--Если пользователь не зарегистрирован отображаем меню с пунктами Вход и Регистрация-->
@@ -29,9 +27,10 @@
                         <li class="nav-item"><a class="nav-link active" aria-current="page" href="/accounts/signup/">Регистрация</a></li>
                         <!--Иначе отображаем имя пользователя и подписки-->
                         {% else %}
-                        <li class="nav-item"><a class="nav-link active" aria-current="page">Вы вошли как: "{{ request.user }}"</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page">Вы вошли как: "{{ request.user }}."</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="/respond/">Отклики.</a></li>
                         <!--Разобраться с подписками-->
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href=" url 'subscriptions' ">Подписки</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href=" url 'subscriptions' ">Подписки.</a></li>
                         {% if perms.board.add_announcement %}
                         <li class="nav-item"><a class="nav-link active" aria-current="page" href={% block link %} {%endblock link %}>{% block link1 %}{% endblock link1 %}</a></li>
                         {% endif %}

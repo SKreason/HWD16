@@ -22,27 +22,48 @@
 ОТКЛИКИ
    <form action="" method="get">
        {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
-       <label>По категории: {{ filterset.form.title }}</label>
+       <label>{{ filter.form }}</label>
        {# Добавим кнопку отправки данных формы #}
        <input type="submit" value="Найти" />
    </form>
 
 
-<form method="get">
-    {{ filter.form }}
-    <input style="margin-top: 10px" type="submit" value="Применить">
-    <button><a href=>Сбросить</a></button>
-</form>
-
+{% if Отклики %}
 {%for Отклик in Отклики %}
+{% if request.user == Отклик.announcement.author %}
 <br>
-{{ Отклик.text }}
-{% endfor %}
+    ID объявления: {{ Отклик.announcement.id }}.  Заголовок объявления: {{ Отклик.announcement.title }}
+<br>
+    Текст объявления: "{{ Отклик.announcement.text|truncatechars:100 }}"
+<br>
+    Автор отклика: {{ Отклик.member }}
+<br>
+    Текст отклика: "{{ Отклик.text }}"
+<br>
+{% if Отклик.confirm == 0 %}
+<p>
+    <a href="{% url 'respond_confirm' id_respond=Отклик.id %}"><button>Принять</button></a>
+</p>
+{% else %}
+<p>
+    <br>
+    Отклик уже принят!
+</p>
 
-{%for Объявление in Объявления %}
-<br>
-{{ Объявление.id }}
+{% endif %}
+<a href="{% url 'respond_delete' id_respond=Отклик.id %}"><button>Удалить</button></a>
+<hr>
+
+{% endif %}
 {% endfor %}
+{% else %}
+<br>
+Нет откликов.
+<hr>
+{% endif %}
+
+
+
 {% endblock content %}
 
 <!--Блок пагинации-->

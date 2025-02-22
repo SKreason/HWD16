@@ -3,7 +3,7 @@ from .models import Announcement
 
 
 class RespondFilter(FilterSet):
-    title = ModelChoiceFilter(
+    announcement = ModelChoiceFilter(
         queryset=Announcement.objects.all(),
         label='По объявлениям',
         empty_label='без фильтра',
@@ -11,5 +11,5 @@ class RespondFilter(FilterSet):
 
     def __init__(self, *args, **kwargs):
         super(RespondFilter, self).__init__(*args, **kwargs)
-        self.filters.queryset = Announcement.objects.filter(author=kwargs['request'])
+        self.filters['announcement'].queryset = Announcement.objects.filter(author=kwargs['request'])
 

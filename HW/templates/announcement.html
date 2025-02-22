@@ -49,18 +49,23 @@
 				Отклики:
 				{%for Отклик in Отклики %}
 				<br>
-				{{ Отклик.member }}:  {{ Отклик.text }}
+				{{ Отклик.member }}:  {{ Отклик.text }} - {% if Отклик.confirm == 1%} --->>Принят!<<--- {% endif %}
 				{% endfor %}
 {% endif %}
-
 <br>
 <hr>
-
 {% if request.user == Объявление.author %}
 <li><a href="{{Объявление.id}}/edit"/>Редактировать объявление</a></li>
 <li><a href="{{Объявление.id}}/delete"/>Удалить объявление</a></li>
 <hr>
 <br>
+{% else %}
+{% if user.is_authenticated %}
+<br>
+<p>
+	<a href="{% url 'respond_add' pk=Объявление.id %}"/>Отклинуться</a>
+</p>
+{% endif %}
 {% endif %}
 
 

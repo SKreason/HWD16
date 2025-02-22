@@ -1,12 +1,10 @@
 
 <!--Шаблон для страницы-->
 {% extends 'index.html' %}
-
-<!--Загрузка своих фильтров, если есть-->
 <!-- load custom_filters -->
 
 <!--Блок заголовка-->
-{% block title %} <!--Заголовок--> {% endblock title %}
+{% block title %} Создание отклика {% endblock title %}
 
 <!--Блок ссылки-->
 {% block link %}<!--Ссылка-->{%endblock link %}
@@ -14,10 +12,18 @@
 {% block namelink %}<!--Имя ссылки-->{% endblock namelink %}
 
 <!--Блок заголовка раздела-->
-{% block title2 %}{% endblock title2 %}
+{% block title2 %}Создать:{% endblock title2 %}
 
 <!--Блок контента страницы-->
-{% block content %}{% endblock content %}
+{% block content %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Save" />
+</form>
+
+{% endblock content %}
 
 <!--Блок пагинации-->
 {% block page %}{% endblock page %}

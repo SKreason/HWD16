@@ -1,13 +1,17 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from django.http import HttpResponse
 from django.urls import reverse_lazy
+from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .filters import RespondFilter
-from .form import AnnouncementForm
+from .form import AnnouncementForm, RespondForm
 from .models import Announcement, Respond
+
+from .tasks import send_email_task_new_respond, send_email_task_confirm_respond
 
 
 class AnnouncementList(ListView):
@@ -78,13 +82,16 @@ class AnnouncementDelete(PermissionRequiredMixin, DeleteView):
 
 class RespondList(ListView):
     model = Respond
+
     template_name = 'respond.html'
     context_object_name = 'Отклики'
+    ordering = "-announcement"
 
     def get_queryset(self):
         queryset = super().get_queryset()
         self.filter = RespondFilter(self.request.GET, queryset, request=self.request.user)
         return self.filter.qs
+
 
     def get_context_data(self, **kwargs):
         queryset = Respond.objects.all()
@@ -94,5 +101,32 @@ class RespondList(ListView):
         return context
 
 
-def index(request):
-    return render (request, 'sample.html')
+class RespondCreate(PermissionRequiredMixin, CreateView):
+    model = Respond
+    form_class = RespondForm
+    template_name = 'createRespond.html'
+    success_url = reverse_lazy('main')
+    permission_required = ('board.add_respond')
+    raise_exception = True
+
+    def form_valid(self, form):
+        Respond = form.save(commit=False)
+        author = self.request.user  # Получаем текущего автора
+        form.instance.member = author  # Устанавливаем автора
+        form.instance.announcement = Announcement.objects.get(id=self.kwargs['pk'])
+        Respond.save()
+        send_email_task_new_respond(Respond.announcement_id)
+        return super().form_valid(form)
+
+def deleteRespond(request, id_respond):  # удаление отклика
+    respond = Respond.objects.get(id=id_respond)
+    Respond.objects.get(id=id_respond).delete()
+    return redirect(f'/respond/')
+
+
+def confirmRespond(request, id_respond):
+    respond = Respond.objects.get(id=id_respond)
+    respond.confirm = 1
+    respond.save()
+    send_email_task_confirm_respond(respond.announcement_id, respond.member)
+    return redirect(f'/respond/')
