@@ -1,12 +1,14 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.http import request
 
 from .models import Announcement, Respond
 
 
 class AnnouncementForm(forms.ModelForm):
+    """
+    Форма для создания объявления.
+    """
     author = User
     title = forms.CharField(label='Заголовок', widget=forms.TextInput(attrs={'class': 'form-control'}))
     text = forms.CharField(min_length=10, label='Текст объявления', widget=forms.Textarea)
@@ -31,6 +33,9 @@ class AnnouncementForm(forms.ModelForm):
 
 
 class RespondForm(forms.ModelForm):
+    """
+    Форма для создания отклика.
+    """
     author = User
     text = forms.CharField(min_length=10, label='Текст объявления', widget=forms.Textarea)
 

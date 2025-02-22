@@ -4,6 +4,9 @@ from django.urls import reverse
 
 
 class Announcement(models.Model):
+    """
+    Модель "Объявление"
+    """
     CATEGORY = [
         ('MT', 'Танки'),
         ('HS', 'Хилы'),
@@ -39,6 +42,9 @@ class Announcement(models.Model):
 
 
 class Respond(models.Model):
+    """
+    Модель "Отклик"
+    """
     member = models.ForeignKey(User, on_delete=models.CASCADE)
     announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE)
     text = models.TextField()

@@ -1,8 +1,5 @@
-from tkinter.font import names
-
 from django.urls import path
 
-from . import views
 from .views import AnnouncementList, AnnouncementDetail, AnnouncementCreate, AnnouncementEdit, AnnouncementDelete, \
     RespondList, RespondCreate, deleteRespond, confirmRespond
 

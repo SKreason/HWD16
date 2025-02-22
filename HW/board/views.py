@@ -1,39 +1,29 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.shortcuts import render, redirect
-
-from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .filters import RespondFilter
 from .form import AnnouncementForm, RespondForm
 from .models import Announcement, Respond
-
 from .tasks import send_email_task_new_respond, send_email_task_confirm_respond
 
 
 class AnnouncementList(ListView):
+    """
+    Представление для списка объявлений.
+    """
     model = Announcement
     ordering = '-dateCreation'
     template_name = 'main_list.html'
     context_object_name = 'Объявления'
     paginate_by = 5
 
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     self.filterset = AnnouncementFilter(self.request.GET, queryset)
-    #     return self.filterset.qs
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     # Добавляем в контекст объект фильтрации.
-    #     context['filterset'] = self.filterset
-    #     return context
-
 
 class AnnouncementDetail(DetailView):
+    """
+    Представление для объявления.
+    """
     model = Announcement
     template_name = 'announcement.html'
     context_object_name = 'Объявление'
@@ -41,11 +31,13 @@ class AnnouncementDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['Отклики'] = Respond.objects.filter(announcement=self.kwargs['pk'])
-        # создаем список существующих авторов и проверяем есть пользователь среди них
         return context
 
 
 class AnnouncementCreate(PermissionRequiredMixin, CreateView):
+    """
+    Представление для создания объявления.
+    """
     model = Announcement
     form_class = AnnouncementForm
     template_name = 'create.html'
@@ -58,11 +50,13 @@ class AnnouncementCreate(PermissionRequiredMixin, CreateView):
         author = self.request.user  # Получаем текущего автора
         form.instance.author = author  # Устанавливаем автора
         Announcement.save()
-        # send_email_task.delay(post.pk)
         return super().form_valid(form)
 
 
 class AnnouncementEdit(PermissionRequiredMixin, UpdateView):
+    """
+    Представление для редактирования объявления.
+    """
     model = Announcement
     form_class = AnnouncementForm
     template_name = 'edit.html'
@@ -72,6 +66,9 @@ class AnnouncementEdit(PermissionRequiredMixin, UpdateView):
 
 
 class AnnouncementDelete(PermissionRequiredMixin, DeleteView):
+    """
+    Представление для удаления объявления.
+    """
     model = Announcement
     template_name = 'delete.html'
     success_url = reverse_lazy('main')
@@ -81,8 +78,10 @@ class AnnouncementDelete(PermissionRequiredMixin, DeleteView):
 
 
 class RespondList(ListView):
+    """
+    Представление для списка откликов.
+    """
     model = Respond
-
     template_name = 'respond.html'
     context_object_name = 'Отклики'
     ordering = "-announcement"
@@ -94,7 +93,6 @@ class RespondList(ListView):
 
 
     def get_context_data(self, **kwargs):
-        queryset = Respond.objects.all()
         context = super().get_context_data(**kwargs)
         context['filter'] = self.filter
         context['Объявления'] = Announcement.objects.filter(author=self.request.user)
@@ -102,6 +100,9 @@ class RespondList(ListView):
 
 
 class RespondCreate(PermissionRequiredMixin, CreateView):
+    """
+    Представление для создания отклика.
+    """
     model = Respond
     form_class = RespondForm
     template_name = 'createRespond.html'
@@ -118,13 +119,24 @@ class RespondCreate(PermissionRequiredMixin, CreateView):
         send_email_task_new_respond(Respond.announcement_id)
         return super().form_valid(form)
 
-def deleteRespond(request, id_respond):  # удаление отклика
-    respond = Respond.objects.get(id=id_respond)
+def deleteRespond(request, id_respond):
+    """
+    Удаление отклика.
+    :param request: запрос на удаление.
+    :param id_respond: ID отклика.
+    :return: ссылка на страницу откликов.
+    """
     Respond.objects.get(id=id_respond).delete()
     return redirect(f'/respond/')
 
 
 def confirmRespond(request, id_respond):
+    """
+    Принятие отклика.
+    :param request: запрос на принятие.
+    :param id_respond: ID отклика.
+    :return: ссылка на страницу откликов.
+    """
     respond = Respond.objects.get(id=id_respond)
     respond.confirm = 1
     respond.save()
